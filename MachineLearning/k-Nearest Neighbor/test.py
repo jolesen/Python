@@ -23,6 +23,13 @@ print(ranges)
 print(minVals)
 
 '''
+'''
 #KNN.datingClassTest()
 KNN.classifyPerson()
+'''
 
+'''
+testVector = KNN.img2vector('C:\\Users\\Lenovo\\Desktop\\trainingDigits\\0_13.txt')
+print(testVector[0,0:31])
+'''
+KNN.handwritingClassTest()

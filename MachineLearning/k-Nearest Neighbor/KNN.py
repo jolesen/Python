@@ -1,5 +1,6 @@
 from numpy import *
 import operator
+from os import listdir
 
 def createDataSet():
     group = array([[1.0,1.1],[1.0,1.0],[0,0],[0,0.1]])
@@ -83,8 +84,47 @@ def classifyPerson():
     print("你对这个人的感受很可能是：",resultList[classifierResult - 1])
 
 
+#将32x32的二进制图像转换为1x1024的向量
+def img2vector(filename):
+    returnVect = zeros((1,1024))
+    fr = open(filename)
+    for i in list(range(32)):
+        lineStr = fr.readline()
+        for j in list(range(32)):
+            returnVect[0, 32*i+j] = int(lineStr[j])
+    return returnVect
 
 
+
+#手写数字识别系统的测试代码
+def handwritingClassTest():
+    hwLabels = []
+    trainingFileList = listdir('C:\\Users\\Lenovo\\Desktop\\trainingDigits')           #获取训练目录内容
+    m = len(trainingFileList) #得到目录内一共有多少文件
+    trainingMat = zeros((m,1024))  #m列1024行训练矩阵，每列存储一个图像
+    for i in list(range(m)):
+        fileNameStr = trainingFileList[i]
+        fileStr = fileNameStr.split('.')[0]
+        classNumStr = int(fileStr.split('_')[0]) #获得图像代表的数字的真实结果
+        hwLabels.append(classNumStr)
+        trainingMat[i,:] = img2vector('C:\\Users\\Lenovo\\Desktop\\trainingDigits/%s' % fileNameStr) #载入图像
+
+    testFileList = listdir('C:\\Users\\Lenovo\\Desktop\\testDigits')        #循环迭代读入测试数据
+    errorCount = 0.0
+    mTest = len(testFileList) #得到测试集的总数
+    for i in list(range(mTest)):
+        fileNameStr = testFileList[i]
+        fileStr = fileNameStr.split('.')[0]
+        classNumStr = int(fileStr.split('_')[0]) #真实结果
+
+        #将32x32的二进制图像转换为1x1024的向量
+        vectorUnderTest = img2vector('C:\\Users\\Lenovo\\Desktop\\testDigits/%s' % fileNameStr)
+        classifierResult = classify0(vectorUnderTest, trainingMat, hwLabels, 9) #带入分类器，得到分类器的返回结果
+        print("分类器返回结果: %d, 真实结果是: %d" % (classifierResult, classNumStr))
+        if (classifierResult != classNumStr): errorCount += 1.0
+
+    print("\n错误总数是 is: %d" % errorCount)
+    print("\n错误率为: %f" % (errorCount/float(mTest)))
 
 
 
